@@ -1,0 +1,29 @@
+---
+- name: Apache Health Checker
+  hosts: all
+  become: yes
+  vars_files:
+    - ./vars.yml
+  tasks:
+    - name: Main task
+      block:
+        - name: Check connection to web server
+          uri:
+            url: http://{{ site_url }}
+
+      rescue:
+        - name: Restart apache server
+          systemd:
+            state: restarted
+            name: "{{ service_name }}"
+        
+        - name: Get date info
+          shell: date "+%Y-%m-%d-%H:%M:%S"
+          register: get_date
+
+        - name: Write restart info to the log file
+          blockinfile:
+            path: /var/log/apache-health-checker/restart.log
+            create: yes
+            insertafter: EOF
+            block: "{{ get_date }}"
