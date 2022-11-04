@@ -1,3 +1,5 @@
 ---
 site_url: hogehoge.com
 service_name: apache2
+user_name: ubuntu
+use_dir: Apache-Health-Checker
